@@ -1,0 +1,29 @@
+snippet {{ "{}" iA
+\{${VISUAL}$1}$0
+endsnippet
+
+snippet { "{}" i
+\{
+$1
+
+endsnippet
+
+snippet (( "()" iA
+($1)$0
+endsnippet
+
+snippet [[ "[]" iA
+[$1]$0
+endsnippet
+
+snippet <	"<>" i
+<$1>$0
+endsnippet
+
+#snippet "(\w+).par" "Parenthesis (postfix)" r
+#(`!p snip.rv = match.group(1)`$1)$0
+#endsnippet
+
+
+
+
