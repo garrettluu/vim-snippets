@@ -11,7 +11,28 @@ def math():
 		return first != ignore
 	except StopIteration:
 		return False
+def create_row_placeholders(snip):
+	# retrieving single line from current string and treat it like tabstops
+	# count
+	placeholders_amount = int(snip.buffer[snip.line].strip())
+
+	# erase current line
+	snip.buffer[snip.line] = ''
+
+	# create anonymous snippet with expected content and
+	# number of tabstops
+	anon_snippet_body = ' & '.join(['$' + str(i+1) for i in range(placeholders_amount)])
+
+	# expand
+	# anonymous
+	# snippet
+	snip.expand_anon(anon_snippet_body)
 endglobal
+
+post_jump "create_row_placeholders(snip)"
+snippet "(\d+)--" "latex table row variable" br
+`!p snip.rv = match.group(1)`
+endsnippet
 
 snippet beg "begin{} / end{}" bA
 \begin{$1}
@@ -29,6 +50,11 @@ snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "Fraction" wrA
 \\frac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
+context "math()"
+snippet ppx "Partial derivative" wA
+\\frac{\\partial $1}{\\partial $2}$0
+endsnippet
+
 snippet b "textbf"
 \\textbf{${VISUAL}$1}$0
 endsnippet
@@ -37,17 +63,17 @@ snippet i "emph"
 \\emph{${VISUAL}$1}$0
 endsnippet
 
-snippet # "section" bA
+snippet # "section" b
 \\section{$1}
 $0
 endsnippet
 
-snippet ## "subsection" bA
+snippet ## "subsection" b
 \\subsection{$1}
 $0
 endsnippet
 
-snippet ### "subsubsection" bA
+snippet ### "subsubsection" b
 \\subsubsection{$1}
 $0
 endsnippet
@@ -67,6 +93,10 @@ $1
 .\]$0
 endsnippet
 
+snippet QED "Tombstone" wA
+$\hfill\square$ $0
+endsnippet
+
 context "math()"
 snippet '([A-Za-z])(\d)' "auto subscript" wrA
 `!p snip.rv = match.group(1)`_`!p snip.rv = match.group(2)`
@@ -75,6 +105,16 @@ endsnippet
 context "math()"
 snippet '([A-Za-z])_(\d\d)' "auto subscript2" wrA
 `!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`}
+endsnippet
+
+context "math()"
+snippet iff "iff" A
+\\Leftrightarrow
+endsnippet
+
+context "math()"
+snippet thn "implies" A
+\\Rightarrow
 endsnippet
 
 context "math()"
@@ -90,6 +130,11 @@ endsnippet
 context "math()"
 snippet != "ne" A
 \\ne 
+endsnippet
+
+context "math()"
+snippet ~~ "approx" A
+\\approx 
 endsnippet
 
 context "math()"
@@ -117,6 +162,51 @@ snippet DD "Delta" iA
 \\Delta
 endsnippet
 
+context "math()"
+snippet AA "For all" iA
+\\forall
+endsnippet
+
+context "math()"
+snippet EE "Exists" iA
+\\exists
+endsnippet
+
+context "math()"
+snippet ee "element" iA
+\\in
+endsnippet
+
+context "math()"
+snippet set "set" wA
+\\{$1:$2\\}$0
+endsnippet
+
+context "math()"
+snippet CC "Complex Number" iA
+\\mathbb\{C\}
+endsnippet
+
+context "math()"
+snippet RR "Real Number" iA
+\\mathbb\{R\}
+endsnippet
+
+context "math()"
+snippet NN "Natural Number" iA
+\\mathbb\{N\}
+endsnippet
+
+context "math()"
+snippet QQ "Rational Number" iA
+\\mathbb\{Q\}
+endsnippet
+
+context "math()"
+snippet ZZ "Integer Number" iA
+\\mathbb\{Z\}
+endsnippet
+
 snippet - "item"
 \\item
 endsnippet
@@ -129,6 +219,11 @@ endsnippet
 context "math()"
 snippet | "abs" A
 |$1|$0
+endsnippet
+
+context "math()"
+snippet norm "norm" A
+\\|$1\\|$0
 endsnippet
 
 snippet code "verbatim"
@@ -164,3 +259,54 @@ snippet pf "proof"
 \\end{proof}
 $0
 endsnippet
+
+priority 10
+context "math()"
+snippet "bar" "bar" riA
+\overline{$1}$0
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])bar" "bar" riA
+\overline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 10
+context "math()"
+snippet "hat" "hat" riA
+\hat{$1}$0
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])hat" "hat" riA
+\hat{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet "(\\?\w+)(,\.|\.,)" "Vector postfix" riA
+\vec{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet "fun([a-zA-Z])" "Function" wrA
+`!p snip.rv=match.group(1)` : $1 \to $2
+endsnippet
+
+context "math()"
+snippet -> "arrow" iA
+\to 
+endsnippet
+
+context "math()"
+snippet cc "subset" iA
+\subset
+endsnippet
+
+context "math()"
+snippet \subset "subseteq" i
+\subseteq
+endsnippet
+
+
